@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Launch Radar — pre-token protocols ranked by implied value</title>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<header class="masthead">
+  <div class="masthead-inner">
+    <div>
+      <p class="eyebrow">Token launch radar</p>
+      <h1>Launch Radar</h1>
+      <p class="lede">Every protocol below records no token. The board ranks them by what a token
+      might be worth if the protocol's record stayed as it is — and shows how to farm each one.</p>
+    </div>
+    <dl class="stats" id="stats"></dl>
+  </div>
+</header>
+
+<main>
+  <section class="toolbar" aria-label="Board controls">
+    <label>Search
+      <input id="q" type="search" placeholder="Name or slug…" autocomplete="off">
+    </label>
+    <label>Category
+      <select id="category"></select>
+    </label>
+    <label>Showing
+      <select id="scope">
+        <option value="all">All 150 ranked</option>
+        <option value="watchlist">Watchlist only</option>
+        <option value="early">Early finds only</option>
+      </select>
+    </label>
+    <label>Sort by
+      <select id="sort">
+        <option value="implied">Implied value</option>
+        <option value="tvl">TVL</option>
+        <option value="growth">7-day growth</option>
+        <option value="age">Time tracked</option>
+      </select>
+    </label>
+    <label>Min TVL
+      <select id="min-tvl">
+        <option value="0">Any</option>
+        <option value="100000000">$100M</option>
+        <option value="500000000">$500M</option>
+        <option value="1000000000">$1B</option>
+      </select>
+    </label>
+    <p class="count" id="count" aria-live="polite"></p>
+  </section>
+
+  <section class="board-wrap">
+    <table class="board" id="board">
+      <thead>
+        <tr>
+          <th class="num">#</th>
+          <th>Protocol</th>
+          <th>Category</th>
+          <th>Chains</th>
+          <th class="num">TVL</th>
+          <th class="num">7d</th>
+          <th class="num">Tracked</th>
+          <th class="num">Implied value</th>
+        </tr>
+      </thead>
+      <tbody id="rows"></tbody>
+    </table>
+    <p class="hint">Click a row to open its detail view and farm plan. Ranks never change when
+    you sort: rank is the model's claim, the table's order is your view of it.</p>
+  </section>
+
+  <section class="detail" id="detail" hidden>
+    <button class="close" id="detail-close" type="button">Close detail</button>
+    <div id="detail-body"></div>
+  </section>
+
+  <section class="live">
+    <h2>Already trading — the market's own values</h2>
+    <p>These protocols already have a token that trades, so they are not ranked. Their
+    market cap is the market's verdict, not this model's. They sit here so a reader can
+    compare a pre-token protocol against what traded tokens are actually worth.</p>
+    <table class="board live-table" id="live-table">
+      <thead>
+        <tr>
+          <th>Protocol</th>
+          <th>Category</th>
+          <th class="num">TVL</th>
+          <th class="num">Market cap</th>
+          <th class="num">7d</th>
+        </tr>
+      </thead>
+      <tbody id="live-rows"></tbody>
+    </table>
+  </section>
+
+  <section class="model">
+    <h2>How the implied value is built</h2>
+    <p class="formula">implied = TVL × 0.30 × (1 + clamp(7d change, −40%, +100%)) × (0.70 + 0.30 × min(age, 730 days) / 730)</p>
+    <div class="model-grid">
+      <div>
+        <h3>TVL × 0.30</h3>
+        <p>TVL is the value a protocol already secures, so it anchors the size of any token.
+        A token worth thirty cents per dollar of TVL is the base claim; the other two pieces
+        move it up or down.</p>
+      </div>
+      <div>
+        <h3>Momentum</h3>
+        <p>The seven-day TVL change is the freshest momentum the snapshot carries. It is
+        clamped at −40% to +100% so one wild week cannot halve or double a protocol. A
+        protocol with no reported change scores as flat.</p>
+      </div>
+      <div>
+        <h3>Tenure</h3>
+        <p>How long the protocol has run with no token yet. A long clean record is the best
+        evidence the snapshot gives that the protocol is real: tenure runs from 0.70 for a
+        brand-new protocol to 1.00 after two years. Unknown age counts as 180 days.</p>
+      </div>
+      <div>
+        <h3>What it is not</h3>
+        <p>It does not predict whether or when a token is issued, and it is the entry's own
+        claim, never the snapshot's. A protocol that records no token may still have one
+        its record does not carry — the board says “records no token”, never “has none”.</p>
+      </div>
+    </div>
+    <p class="model-foot" id="model-foot"></p>
+  </section>
+</main>
+
+<footer>
+  <p>Launch Radar. Snapshot: DefiLlama protocols, fetched 2026-11-14. The watchlist is the
+  house's floor of 40 protocols at or above $50M TVL with no token recorded; the board adds
+  110 early finds below the floor. No network: every byte on this page ships with it.</p>
+</footer>
+
+<script src="../data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
